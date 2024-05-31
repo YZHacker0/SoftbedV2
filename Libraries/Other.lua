@@ -6,7 +6,7 @@ function create(i, k)
 	return e;
 end
 
-local layout = game.Players.LocalPlayer:FindFirstChild('PlayerGui'):WaitForChild('layout');
+local layout = game.Players.LocalPlayer:FindFirstChild('PlayerGui'):WaitForChild('SoftUI');
 
 local isReady = true;
 function sendNotification(title, text, duration)
