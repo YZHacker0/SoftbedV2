@@ -92,7 +92,7 @@ function soft:Window(text, callback)
                 )
                 break
             end
-        end]]
+        end]] 
 
         gui.Position = newPos
     end
