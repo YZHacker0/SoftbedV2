@@ -63,7 +63,7 @@ function soft:Window(text, callback)
         end
         this.highlighted = true
     end
-    win:Highlight
+    win:Highlight()
 	function win:Destroy()
         if this.connections then
             for _, conn in pairs(this.connections) do
@@ -96,7 +96,9 @@ function soft:Window(text, callback)
         )
 
         -- Move the current window
-        gui.Position = newPos
+        if this.highlighted then
+            gui.Position = newPos
+        end
     end
 
     -- Connect input events
