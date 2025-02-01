@@ -40,7 +40,7 @@ function soft:Window(text, callback)
 	local win = {};
 	local this = {};
 	local spacing = 10
-    Position = UDim2.new(0, spacing + ((172 + spacing) * (#module.windows)), 0, 0)
+    local Position = UDim2.new(0, spacing + ((172 + spacing) * (#module.windows)), 0, 0)
 	this.Window = create('Frame', {
 		["AutomaticSize"] = Enum.AutomaticSize.X;
 		["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
