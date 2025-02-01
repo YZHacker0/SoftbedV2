@@ -45,7 +45,8 @@ function soft:Window(text, callback)
 		["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
 		["BackgroundTransparency"] = 0.30000001192092896;
 		["BorderColor3"] = Color3.fromRGB(0, 0, 0);
-		["BorderSizePixel"] UDim2.new(0, spacing + ((172 + spacing) * (#module.windows)), 0, 0)Position;
+		["BorderSizePixel"] = 0;
+		["Position"] = UDim2.new(0, spacing + ((172 + spacing) * (#module.windows)), 0, 0);
 		["Size"] = UDim2.new(0, 172, 0, 24);
 		["Name"] = table.concat(text:lower():split(' '), '_');
 		["Active"] = true;
