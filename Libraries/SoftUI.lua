@@ -67,42 +67,38 @@ function soft:Window(text, callback)
     end
 	task.spawn(function()
     local UserInputService = game:GetService("UserInputService")
-    local gui = this.Window
+    local gui = this.Window -- The current window being dragged
 
     local dragging = false
     local dragInput
     local dragStart
     local startPos
 
+    -- Function to update the position of the dragged window
     local function update(input)
         if not dragging then return end
 
+        -- Calculate the new position based on the mouse/touch movement
         local delta = input.Position - dragStart
-        local newPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        local newPos = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
 
-        -- Check for collisions with other windows
-        --[[for _, otherWindow in pairs(module.windows) do
-            if otherWindow and otherWindow ~= gui and areFramesOverlapping(gui, otherWindow) then
-                -- Snap to the right of the overlapping window
-                newPos = UDim2.new(
-                    startPos.X.Scale,
-                    otherWindow.AbsolutePosition.X + otherWindow.AbsoluteSize.X + 10, -- 10 pixels padding
-                    startPos.Y.Scale,
-                    startPos.Y.Offset + delta.Y
-                )
-                break
-            end
-        end]] 
-
+        -- Move the current window
         gui.Position = newPos
     end
 
+    -- Connect input events
     gui.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
             startPos = gui.Position
 
+            -- Stop dragging when the input ends (e.g., mouse button is released)
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     dragging = false
