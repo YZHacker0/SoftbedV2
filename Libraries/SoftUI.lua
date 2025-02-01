@@ -28,13 +28,15 @@ module.windows = {};
 function soft:Window(text, callback)
 	local win = {};
 	local this = {};
+	local spacing = 10
+Position = UDim2.new(0, spacing + ((172 + spacing) * (#module.windows)), 0, 0)
 	this.Window = create('Frame', {
 		["AutomaticSize"] = Enum.AutomaticSize.X;
 		["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
 		["BackgroundTransparency"] = 0.30000001192092896;
 		["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 		["BorderSizePixel"] = 0;
-		["Position"] = UDim2.new(0.0944558531, 180*(#module.windows), 0.0754039511, 0);
+		["Position"] = spacing;
 		["Size"] = UDim2.new(0, 172, 0, 24);
 		["Name"] = table.concat(text:lower():split(' '), '_');
 		["Active"] = true;
@@ -57,6 +59,18 @@ function soft:Window(text, callback)
 		local UserInputService = game:GetService("UserInputService")
 
 		local gui = this.Window;
+
+        local function areFramesOverlapping(frame1, frame2)
+            local frame1Pos = frame1.AbsolutePosition
+            local frame1Size = frame1.AbsoluteSize
+            local frame2Pos = frame2.AbsolutePosition
+            local frame2Size = frame2.AbsoluteSize
+
+            return frame1Pos.X < frame2Pos.X + frame2Size.X and
+            frame1Pos.X + frame1Size.X > frame2Pos.X and
+            frame1Pos.Y < frame2Pos.Y + frame2Size.Y and
+            frame1Pos.Y + frame1Size.Y > frame2Pos.Y
+        end
 
 		local dragging
 		local dragInput
