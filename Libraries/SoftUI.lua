@@ -11,6 +11,9 @@ module.ready = false;
 
 function module:Init()
 	if module.ready then return end;
+	if game.Players.LocalPlayer:FindFirstChild('PlayerGui'):WaitForChild('SoftUI') ~= nil then
+	    game.Players.LocalPlayer:FindFirstChild('PlayerGui'):WaitForChild('SoftUI'):Destroy()
+	end
 	soft.Root = create('ScreenGui', {
 		['ResetOnSpawn'] = false;
 		['ZIndexBehavior'] = Enum.ZIndexBehavior.Sibling;
