@@ -81,7 +81,7 @@ function soft:Window(text, callback)
         local newPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 
         -- Check for collisions with other windows
-        for _, otherWindow in pairs(module.windows) do
+        --[[for _, otherWindow in pairs(module.windows) do
             if otherWindow and otherWindow ~= gui and areFramesOverlapping(gui, otherWindow) then
                 -- Snap to the right of the overlapping window
                 newPos = UDim2.new(
@@ -92,7 +92,7 @@ function soft:Window(text, callback)
                 )
                 break
             end
-        end
+        end]]
 
         gui.Position = newPos
     end
