@@ -80,14 +80,16 @@ function sendNotification(title, text, duration)
 	this.Visible = true;
 	Title.Text = title;
 	Text.Text = text;
-	timer:TweenSize(UDim2.new(1, -7, 0, 7), 'In', 'Linear', duration or 5, true);
-	task.wait(duration)
-	game:GetService('TweenService'):Create(this, TweenInfo.new(.5, Enum.EasingStyle.Linear, Enum.EasingDirection.In), {
+	spawn(function()
+	    timer:TweenSize(UDim2.new(1, -7, 0, 7), 'In', 'Linear', duration or 5, true);
+	    task.wait(duration)
+	    game:GetService('TweenService'):Create(this, TweenInfo.new(.5, Enum.EasingStyle.Linear, Enum.EasingDirection.In), {
 		['Position'] = UDim2.new(0.5, 0, -1, 0)
-	}):Play()
-	task.wait(0.5);
-	isReady = true;
-	this:Destroy()
+	    }):Play()
+    	task.wait(0.5);
+    	isReady = true;
+    	this:Destroy()
+	end)
 end
 
 
