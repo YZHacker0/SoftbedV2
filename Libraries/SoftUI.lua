@@ -5,6 +5,17 @@ function create(i, prop)
 	end
 	return new;
 end
+local function areFramesOverlapping(frame1, frame2)
+    local frame1Pos = frame1.AbsolutePosition
+    local frame1Size = frame1.AbsoluteSize
+    local frame2Pos = frame2.AbsolutePosition
+    local frame2Size = frame2.AbsoluteSize
+
+    return frame1Pos.X < frame2Pos.X + frame2Size.X and
+           frame1Pos.X + frame1Size.X > frame2Pos.X and
+           frame1Pos.Y < frame2Pos.Y + frame2Size.Y and
+           frame1Pos.Y + frame1Size.Y > frame2Pos.Y
+end
 local soft = {};
 local module = {};
 module.ready = false;
@@ -56,60 +67,63 @@ Position = UDim2.new(0, spacing + ((172 + spacing) * (#module.windows)), 0, 0)
         this.Window:Destroy()
     end
 	task.spawn(function()
-		local UserInputService = game:GetService("UserInputService")
+    local UserInputService = game:GetService("UserInputService")
+    local gui = this.Window
 
-		local gui = this.Window;
+    local dragging = false
+    local dragInput
+    local dragStart
+    local startPos
 
-        local function areFramesOverlapping(frame1, frame2)
-            local frame1Pos = frame1.AbsolutePosition
-            local frame1Size = frame1.AbsoluteSize
-            local frame2Pos = frame2.AbsolutePosition
-            local frame2Size = frame2.AbsoluteSize
+    local function update(input)
+        if not dragging then return end
 
-            return frame1Pos.X < frame2Pos.X + frame2Size.X and
-            frame1Pos.X + frame1Size.X > frame2Pos.X and
-            frame1Pos.Y < frame2Pos.Y + frame2Size.Y and
-            frame1Pos.Y + frame1Size.Y > frame2Pos.Y
+        local delta = input.Position - dragStart
+        local newPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+
+        -- Check for collisions with other windows
+        for _, otherWindow in pairs(module.windows) do
+            if otherWindow and otherWindow ~= gui and areFramesOverlapping(gui, otherWindow) then
+                -- Snap to the right of the overlapping window
+                newPos = UDim2.new(
+                    startPos.X.Scale,
+                    otherWindow.AbsolutePosition.X + otherWindow.AbsoluteSize.X + 10, -- 10 pixels padding
+                    startPos.Y.Scale,
+                    startPos.Y.Offset + delta.Y
+                )
+                break
+            end
         end
 
-		local dragging
-		local dragInput
-		local dragStart
-		local startPos
+        gui.Position = newPos
+    end
 
-		local function update(input)
-			local delta = input.Position - dragStart
-			local newpos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-			game:GetService('TweenService'):Create(gui, TweenInfo.new(.20), {
-				['Position'] = newpos
-			}):Play();
-		end
+    gui.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = gui.Position
 
-		table.insert(this.connections,gui.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-				dragging = true
-				dragStart = input.Position
-				startPos = gui.Position
-				input.Changed:Connect(function()
-					if input.UserInputState == Enum.UserInputState.End then
-						dragging = false
-					end
-				end)
-			end
-		end))
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
 
-		table.insert(this.connections,gui.InputChanged:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-				dragInput = input
-			end
-		end))
+    gui.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
 
-		table.insert(this.connections,UserInputService.InputChanged:Connect(function(input)
-			if input == dragInput and dragging then
-				update(input)
-			end
-		end))
-	end)
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            update(input)
+        end
+    end)
+end)
 	------> Arrow 
 	create('ImageButton', {
 		["Image"] = "rbxasset://textures/DeveloperFramework/button_arrow_right.png";
