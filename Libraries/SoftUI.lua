@@ -40,12 +40,19 @@ function soft:Window(text, callback)
 		["Active"] = true;
 		["Parent"] = soft.Root;
 	});
-	table.insert(module.windows, this.Window)
-	this.index = #module.windows;
+	this.connections = {}
+	local windowId = #module.windows + 1
+    module.windows[windowId] = this.Window
+    this.index = windowId
 	function win:Destroy()
-		table.remove(module.windows, this.index)
-		this.Window:Destroy()
-	end
+        if this.connections then
+            for _, conn in pairs(this.connections) do
+                conn:Disconnect()
+            end
+        end
+        module.windows[this.index] = nil
+        this.Window:Destroy()
+    end
 	task.spawn(function()
 		local UserInputService = game:GetService("UserInputService")
 
@@ -59,22 +66,12 @@ function soft:Window(text, callback)
 		local function update(input)
 			local delta = input.Position - dragStart
 			local newpos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-			--[[for i, v in pairs(module.windows) do
-				if v and v ~= gui then
-					if areFramesOverlapping(gui, v) then
-						game:GetService('TweenService'):Create(gui, TweenInfo.new(.20), {
-							['Position'] = UDim2.new(startPos.X.Scale, startPos.X.Offset + 172, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-						}):Play();
-						return;
-					end
-				end;
-			end]]
 			game:GetService('TweenService'):Create(gui, TweenInfo.new(.20), {
 				['Position'] = newpos
 			}):Play();
 		end
 
-		gui.InputBegan:Connect(function(input)
+		table.insert(this.connections,gui.InputBegan:Connect(function(input)
 			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 				dragging = true
 				dragStart = input.Position
@@ -85,19 +82,19 @@ function soft:Window(text, callback)
 					end
 				end)
 			end
-		end)
+		end))
 
-		gui.InputChanged:Connect(function(input)
+		table.insert(this.connections,gui.InputChanged:Connect(function(input)
 			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 				dragInput = input
 			end
-		end)
+		end))
 
-		UserInputService.InputChanged:Connect(function(input)
+		table.insert(this.connections,UserInputService.InputChanged:Connect(function(input)
 			if input == dragInput and dragging then
 				update(input)
 			end
-		end)
+		end))
 	end)
 	------> Arrow 
 	create('ImageButton', {
