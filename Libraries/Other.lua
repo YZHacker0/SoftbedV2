@@ -154,6 +154,6 @@ function cooldown(sec)
 end
 
 return {
-	['notification'] = sendNotification;
-	['cooldown'] = cooldown;	
+	['Notify'] = sendNotification;
+	['ProgressBar'] = cooldown;	
 };
