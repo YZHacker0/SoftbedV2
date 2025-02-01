@@ -53,9 +53,17 @@ function soft:Window(text, callback)
 		["Parent"] = soft.Root;
 	});
 	this.connections = {}
-	local windowId = #module.windows + 1
-    module.windows[windowId] = this.Window
+	local windowId = #module.windows
+    module.windows[windowId] = this
     this.index = windowId
+    function win:Highlight()
+        for i = 0, #module.windows do
+            winz = module.windows[i]
+            winz.highlighted = false
+        end
+        this.highlighted = true
+    end
+    win:Highlight
 	function win:Destroy()
         if this.connections then
             for _, conn in pairs(this.connections) do
