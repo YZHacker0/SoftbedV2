@@ -40,14 +40,14 @@ function soft:Window(text, callback)
 	local win = {};
 	local this = {};
 	local spacing = 10
-Position = UDim2.new(0, spacing + ((172 + spacing) * (#module.windows)), 0, 0)
+    Position = UDim2.new(0, spacing + ((172 + spacing) * (#module.windows)), 0, 0)
 	this.Window = create('Frame', {
 		["AutomaticSize"] = Enum.AutomaticSize.X;
 		["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
 		["BackgroundTransparency"] = 0.30000001192092896;
 		["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 		["BorderSizePixel"] = 0;
-		["Position"] = spacing;
+		["Position"] = Position;
 		["Size"] = UDim2.new(0, 172, 0, 24);
 		["Name"] = table.concat(text:lower():split(' '), '_');
 		["Active"] = true;
