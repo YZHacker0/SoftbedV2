@@ -88,7 +88,7 @@ function sendNotification(title, text, duration)
 	    }):Play()
     	task.wait(0.5);
     	isReady = true;
-    	this:Destroy()
+    local	this:Destroy()
 	end)
 end
 
